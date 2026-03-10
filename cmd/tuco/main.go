@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 )
 
 var flagClean = flag.Bool("clean", false, "remove artifacts")
@@ -52,7 +53,15 @@ func main() {
 		os.Exit(0)
 	}
 
-	if err2 := tc.Run(); err2 != nil {
-		log.Fatal(err2)
+	if errs := tc.Run(); len(errs) != 0 {
+		sort.Slice(errs, func(i, j int) bool {
+			return errs[i].Error() < errs[j].Error()
+		})
+
+		for _, err2 := range errs {
+			log.Println(err2)
+		}
+
+		os.Exit(1)
 	}
 }

@@ -5,6 +5,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"archive/tar"
+	"bufio"
 	"compress/gzip"
 	"errors"
 	"fmt"
@@ -15,7 +16,6 @@ import (
 	"path"
 	"strings"
 	"sync"
-	"sync/atomic"
 )
 
 // ConfigurationFilename denotes the location of the tuco configuration file,
@@ -251,11 +251,27 @@ func (o Tuco) Archive(port Port, outputPth string) error {
 	return nil
 }
 
+// prefixStream disambiguates concurrent child process output streams.
+func prefixStream(prefix string, wg *sync.WaitGroup, r io.Reader) {
+	defer wg.Done()
+
+	scanner := bufio.NewScanner(r)
+
+	for scanner.Scan() {
+		log.Printf("%s%s\n", prefix, scanner.Text())
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Printf("%serror: %v\n", prefix, err)
+	}
+}
+
 // Build generates binaries for the given port.
 func (o Tuco) Build(port Port) error {
 	portPadded := fmt.Sprintf("%-*s", o.maxPortLen, port)
+	prefix := fmt.Sprintf("[ %s ] ", portPadded)
 
-	log.Printf("[ %s ] compiling\n", portPadded)
+	log.Printf("%scompiling\n", prefix)
 
 	if len(o.Artifacts) == 0 {
 		return errors.New("blank artifacts")
@@ -280,24 +296,47 @@ func (o Tuco) Build(port Port) error {
 	cmd.Env = os.Environ()
 	cmd.Env = append(cmd.Env, fmt.Sprintf("GOOS=%s", port.Os))
 	cmd.Env = append(cmd.Env, fmt.Sprintf("GOARCH=%s", port.Arch))
-	cmd.Stderr = os.Stderr
-	cmd.Stdout = os.Stdout
 
-	if o.Debug {
-		log.Printf("[ %s ] command: %s\n", portPadded, cmd)
-	}
+	stderrReader, err := cmd.StderrPipe()
 
-	if err := cmd.Run(); err != nil {
+	if err != nil {
 		return err
 	}
 
-	log.Printf("[ %s ] archiving\n", portPadded)
+	stdoutReader, err := cmd.StdoutPipe()
+
+	if err != nil {
+		return err
+	}
+
+	if o.Debug {
+		log.Printf("%scommand: %s\n", prefix, cmd)
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	go prefixStream(prefix, &wg, stderrReader)
+	go prefixStream(prefix, &wg, stdoutReader)
+
+	if err2 := cmd.Start(); err2 != nil {
+		return err2
+	}
+
+	err = cmd.Wait()
+	wg.Wait()
+
+	if err != nil {
+		return fmt.Errorf("%serror: %v", prefix, err)
+	}
+
+	log.Printf("%sarchiving\n", prefix)
 
 	return o.Archive(port, outputPth)
 }
 
 // Run crosscompiles and archives Go applications.
-func (o Tuco) Run() error {
+func (o Tuco) Run() []error {
 	ports := o.Ports
 	portsLen := len(ports)
 
@@ -307,28 +346,32 @@ func (o Tuco) Run() error {
 	}
 
 	tarballRoot := o.tarballRoot
+	var errs []error
 
 	if err := os.MkdirAll(tarballRoot, 0755); err != nil {
-		return err
+		errs = append(errs, err)
+		return errs
 	}
 
-	var errA atomic.Pointer[error]
+	var m sync.Mutex
 	var wg sync.WaitGroup
 	wg.Add(portsLen)
 	jobsCh := make(chan Port)
 
 	for w := uint(1); w <= o.Jobs; w++ {
-		go func(wg *sync.WaitGroup, errA *atomic.Pointer[error]) {
+		go func(wg *sync.WaitGroup, m *sync.Mutex, errs *[]error) {
 			for {
 				port := <-jobsCh
 
 				if err := o.Build(port); err != nil {
-					errA.Store(&err)
+					m.Lock()
+					*errs = append(*errs, err)
+					m.Unlock()
 				}
 
 				wg.Done()
 			}
-		}(&wg, &errA)
+		}(&wg, &m, &errs)
 	}
 
 	for _, port := range o.Ports {
@@ -337,8 +380,8 @@ func (o Tuco) Run() error {
 
 	wg.Wait()
 
-	if errP := errA.Load(); errP != nil {
-		return *errP
+	if len(errs) != 0 {
+		return errs
 	}
 
 	log.Printf("binaries archived: %s\n", tarballRoot)
