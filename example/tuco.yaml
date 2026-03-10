@@ -7,12 +7,12 @@ banner: "hello"
 
 # jobs: 4
 
-# go_args:
-# - "-v"
-
 # excludes:
 # - ".DS_Store"
 # - "Thumbs.db"
+
+# go_args:
+# - "-v"
 
 #
 # Go Ports
