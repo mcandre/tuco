@@ -262,7 +262,9 @@ func prefixStream(prefix string, wg *sync.WaitGroup, r io.Reader) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		log.Printf("%serror: %v\n", prefix, err)
+		if !errors.Is(err, os.ErrClosed) {
+			log.Printf("%serror: %v\n", prefix, err)
+		}
 	}
 }
 
