@@ -1,6 +1,6 @@
 # tuco: Go port multiplexer
 
-[![GitHub Downloads](https://img.shields.io/github/downloads/mcandre/tuco/total?logo=github)](https://github.com/mcandre/tuco/releases) [![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/mcandre/tuco) [![Test](https://github.com/mcandre/tuco/actions/workflows/test.yml/badge.svg)](https://github.com/mcandre/tuco/actions/workflows/test.yml) [![license](https://img.shields.io/badge/license-BSD-0)](LICENSE.md) [![Donate](https://img.shields.io/badge/-any?logo=gumroad&label=Donate&color=grey)](https://mcandre.gumroad.com/)
+[![GitHub Downloads](https://img.shields.io/github/downloads/mcandre/tuco/total?logo=github)](https://github.com/mcandre/tuco/releases) [![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/mcandre/tuco) [![Test](https://github.com/mcandre/tuco/actions/workflows/test.yml/badge.svg)](https://github.com/mcandre/tuco/actions/workflows/test.yml) [![license](https://img.shields.io/badge/license-BSD-0)](LICENSE.md) [![Donate](https://img.shields.io/badge/%E2%99%A5-Sponsor-BF3988)](https://github.com/sponsors/mcandre)
 
 ![la tuza](tuco.png)
 
