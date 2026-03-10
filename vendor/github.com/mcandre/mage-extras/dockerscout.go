@@ -12,7 +12,7 @@ func DockerScout(args ...string) error {
 	cmd.Args = append(cmd.Args, "cves")
 	cmd.Args = append(cmd.Args, args...)
 	cmd.Env = os.Environ()
-	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
 	return cmd.Run()
 }

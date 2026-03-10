@@ -1,48 +1,68 @@
-# INSTALL
+# INSTALL GUIDE
 
-We support several installation methods.
+In addition to Go modules, tuco also supports alternative installation methods.
 
-## RUNTIME REQUIREMENTS
+# INSTALL (PRECOMPILED BINARIES)
 
-* [Go](https://go.dev/) 1.25.4+
+Precompiled binaries may be installed manually.
 
-# PRECOMPILED BINARIES
+## Install
 
-https://github.com/mcandre/factorio/releases
+1. Download a [tarball](https://github.com/mcandre/tuco/releases) corresponding to your environment's architecture and OS.
+2. Extract executables into a selected directory.
 
-## Instructions
+   Examples:
 
-1. Download release archive.
-2. Extract archive.
-3. Select executables for your target platform.
-4. Copy executabless to a convenient location, e.g. `$HOME/bin`.
-5. Ensure location is registered in `$PATH`.
+   * `~/.local/bin` (XDG compliant per-user)
+   * `/usr/local/bin` (XDG compliant global)
+   * `~/bin` (BSD)
+   * `~\AppData\Local` (native Windows)
 
-# DOCKER
+## Postinstall
 
-## Requirements
+Ensure the selected directory is registered with your shell's `PATH` environment variable.
 
-* [Docker](https://www.docker.com/) 28.0.1+
+## Uninstall
 
-## Instructions
+Remove the application executables from the selected directory.
+
+## System Requirements
+
+### Bitness
+
+64
+
+### Hosts
+
+* AIX (PowerPC)
+* DragonflyBSD (Intel)
+* FreeBSD (ARM, Intel)
+* Illumos (Intel)
+* Linux (ARM, Intel, LoongArch, MIPS, MIPS LE, PowerPC, PowerPC LE, RISC-V, s390x)
+* macOS 26 Tahoe+ (ARM, Intel)
+* NetBSD (ARM, Intel)
+* OpenBSD (ARM, Intel, PowerPC, RISC-V)
+* Plan9 (Intel)
+* Solaris (Intel)
+* Windows 11+ (ARM, Intel)
+
+### Prerequisites
+
+* [Go](https://go.dev/)
+
+# INSTALL (COMPILE FROM SOURCE)
 
 ```sh
-docker pull n4jm4/factorio
+git clone https://github.com/mcandre/tuco.git
+cd tuco
+go install ./...
 ```
 
-# BUILD FROM SOURCE
+## System Requirements
 
-## Requirements
+### Prerequisites
 
-* Ensure `GOBIN` is registered in `$PATH`. Validate like `go env GOBIN; echo "$PATH"`
+* [git](https://git-scm.com/)
+* [Go](https://go.dev/)
 
-## Instructions
-
-```sh
-go get -tool github.com/mcandre/factorio/src/cmd/factorio
-go mod tidy
-go mod vendor
-go install tool
-```
-
-For more information on developing factorio itself, see [DEVELOPMENT.md](DEVELOPMENT.md).
+For more information on developing tuco, see our [development guide](DEVELOPMENT.md).

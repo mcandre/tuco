@@ -1,10 +1,11 @@
-module github.com/mcandre/factorio
+module github.com/mcandre/tuco
 
-go 1.25.4
+go 1.26.1
 
 require (
-	github.com/magefile/mage v1.15.0
-	github.com/mcandre/mage-extras v0.0.32
+	github.com/magefile/mage v1.16.0
+	github.com/mcandre/mage-extras v0.0.34
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (

@@ -16,8 +16,8 @@ func GoImports(args ...string) error {
 		cmd.Args = append(cmd.Args, args...)
 		cmd.Args = append(cmd.Args, pth)
 		cmd.Env = os.Environ()
-		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
+		cmd.Stdout = os.Stdout
 
 		if err := cmd.Run(); err != nil {
 			return err

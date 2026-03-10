@@ -5,5 +5,5 @@ WORKDIR /src
 RUN go install ./...
 
 FROM scratch
-COPY --from=build /root/go/bin/factorio /factorio
-ENTRYPOINT ["/factorio"]
+COPY --from=build /root/go/bin/tuco /tuco
+ENTRYPOINT ["/tuco"]

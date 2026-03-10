@@ -21,8 +21,8 @@ func GoLint(args ...string) error {
 		cmd := exec.Command(cmdName)
 		cmd.Env = os.Environ()
 		cmd.Args = cmdParameters
-		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
+		cmd.Stdout = os.Stdout
 
 		if err := cmd.Run(); err != nil {
 			return err

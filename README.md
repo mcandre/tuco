@@ -1,70 +1,66 @@
-# factorio: Go cross-compiler
+# tuco: Go port multiplexer
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/n4jm4/factorio)](https://hub.docker.com/r/n4jm4/factorio) [![GitHub Downloads](https://img.shields.io/github/downloads/mcandre/factorio/total?logo=github)](https://github.com/mcandre/factorio/releases) [![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/mcandre/factorio) [![Test](https://github.com/mcandre/factorio/actions/workflows/test.yml/badge.svg)](https://github.com/mcandre/factorio/actions/workflows/test.yml) [![license](https://img.shields.io/badge/license-BSD-3)](LICENSE.md) [![Donate](https://img.shields.io/badge/-any?logo=gumroad&label=Donate&color=grey)](https://mcandre.gumroad.com/)
+[![GitHub Downloads](https://img.shields.io/github/downloads/mcandre/tuco/total?logo=github)](https://github.com/mcandre/tuco/releases) [![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/mcandre/tuco) [![Test](https://github.com/mcandre/tuco/actions/workflows/test.yml/badge.svg)](https://github.com/mcandre/tuco/actions/workflows/test.yml) [![license](https://img.shields.io/badge/license-BSD-0)](LICENSE.md) [![Donate](https://img.shields.io/badge/-any?logo=gumroad&label=Donate&color=grey)](https://mcandre.gumroad.com/)
 
-```text
-    /)        _/_
-   // __.  _. /  __ __  o __
-  //_(_/|_(__<__(_)/ (_<_(_)
- />
-</
-```
+![la tuza](tuco.png)
 
-# ABOUT
+# SUMMARY
 
-factorio accelerates Go application development, by automating the process of generating binaries for a multitude of platforms. Your time is valuable. Spend it developing software, not tinkering with toolchains.
-
-factorio is fast. It has no intrinsic dependency on any containers or virtual machines. Factorio plugs directly into the standard `go` command line system.
-
-No relation to the video game *Factorio*.
+tuco streamlines Go application porting.
 
 # EXAMPLE
 
 ```console
-$ cd example
+% cd example
 
-$ factorio
+% tuco
 
-$ tree bin/artifact-dev
-bin/artifact-dev
-├── darwin
-│   ├── amd64
-│   │   └── factorio
-│   └── arm64
-│       └── factorio
+% ls bin/hello-ports
+hello-aix-ppc64.tgz
+hello-darwin-amd64.tgz
+hello-darwin-arm64.tgz
 ...
 ```
 
-# INSTALLATION
+For more CLI option, run `tuco -help`.
 
-See [INSTALL.md](INSTALL.md).
+For more ports, run `go tool dist list`.
 
-## Recommended
+# DOWNLOAD
 
-* [GNU](https://www.gnu.org/)/[BSD](https://en.wikipedia.org/wiki/Berkeley_Software_Distribution) [tar](https://en.wikipedia.org/wiki/Tar_(computing))
-* [tree](https://en.wikipedia.org/wiki/Tree_(command))
-* a [UNIX](https://en.wikipedia.org/wiki/Unix)-like environment
+```sh
+go install github.com/mcandre/tuco/cmd/tuco@latest
+```
 
-tar is a portable archiver suitable for creating `*.tgz` tarball archives. Users can then download the tarball and extract the executable relevant to their platform. Tarballs are especially well suited for use in Docker containers, as the tar command is more likely to be installed than unzip.
+## Prerequisites
 
-Note that non-UNIX file systems may not preserve crucial chmod ACL bits during port generation. This can corrupt downstream artifacts, such as compressed archives and installation procedures.
+* [Go](https://go.dev/)
+
+For more platforms and installation methods, see our [install guide](INSTALL.md).
+
+# ABOUT
+
+tuco elevates the Go compilation experience, taking care of many low level tasks. So tht you can focus on developing your appliaction.
+
+# FEATURES
+
+* Parallelism
+* IaC friendly
+* Easy port selection with YAML comment toggles
+* Automatically corrects chmod bits inside tarballs
+* Logical directory structure for straightforward binary based OS packaging
 
 # CONFIGURATION
 
-The default subdirectory can be customized with a `FACTORIO_BANNER` environment variable, e.g. `FACTORIO_BANNER=hello-0.0.1`. Then artifacts will appear in `bin/hello-0.0.1/`. This is helpful when structuring file paths in prepraration for compressed archives, for example.
+For details on tuning tuco, see our [configuration guide](CONFIGURATION).
 
-factorio primarily assists conventional PC (desktop/laptop/workstation/server) applications. factorio enables the standard platforms expected to work out of the box for `go build`, particularly any pure Go project.
+# RESOURCES
 
-factorio will exclude mobile platforms by default. You can customize the platform blocklist by supplying a Go [Regexp](https://godoc.org/regexp) to a `FACTORIO_PLATFORM_BLOCKLIST` environment variable, e.g. `FACTORIO_PLATFORM_BLOCKLIST=//`.
+Prior art, personal plugs, and tools for developing portable applications (including non-Go projects)!
 
-factorio is essentially compatible with `go build` flags and environment variables. Any Extra environment variables or flags you pass to `factorio` will propagate to `go build`.
+* [mcandre/crit](https://github.com/mcandre/crit) - Rust multiplexer
+* [mcandre/rockhopper](https://github.com/mcandre/rockhopper) - OS package multiplexer
+* [tree](https://en.wikipedia.org/wiki/Tree_(command)) - an CLI file manager
+* [xgo](https://github.com/techknowlogick/xgo) - cGo multiplexer
 
-## SEE ALSO
-
-* [chandler](https://github.com/mcandre/chandler) normalizes executable archives
-* [crit](https://github.com/mcandre/crit) generates Rust ports
-* [LLVM](https://llvm.org/) bitcode offers an abstract assembler format for C/C++ code.
-* [rockhopper](https://github.com/mcandre/rockhopper) generates packages for many operating systems.
-* [tuggy](https://github.com/mcandre/tuggy) automates multiplatform Docker image builds.
-* [WASM](https://webassembly.org/) provides a portable interface for C/C++ code.
-* [xgo](https://github.com/techknowlogick/xgo) supports Go projects with native cgo dependencies.
+🐹🍹

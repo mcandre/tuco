@@ -13,7 +13,7 @@ func Archive(portBasename string, artifactsPath string) error {
 	cmd.Args = append(cmd.Args, "czf", archiveFilename, portBasename)
 	cmd.Dir = artifactsPath
 	cmd.Env = os.Environ()
-	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
 	return cmd.Run()
 }

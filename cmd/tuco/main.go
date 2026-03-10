@@ -1,8 +1,8 @@
-// Package main implements a tool for automating Go cross-compilation.
+// Package main implements a tool for automating Go crosscompilation.
 package main
 
 import (
-	"github.com/mcandre/factorio"
+	"github.com/mcandre/tuco"
 
 	"flag"
 	"fmt"
@@ -10,6 +10,7 @@ import (
 	"os"
 )
 
+var flagClean = flag.Bool("clean", false, "remove artifacts")
 var flagVersion = flag.Bool("version", false, "show version")
 var flagHelp = flag.Bool("help", false, "show usage menu")
 
@@ -21,7 +22,7 @@ func usage() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("Usage: %v [OPTION] [-- <go build flags>]\n", program)
+	fmt.Printf("Usage: %v [OPTION]\n", program)
 	flag.PrintDefaults()
 }
 
@@ -30,16 +31,28 @@ func main() {
 
 	switch {
 	case *flagVersion:
-		fmt.Println(factorio.Version)
+		fmt.Println(tuco.Version)
 		os.Exit(0)
 	case *flagHelp:
 		usage()
 		os.Exit(0)
 	}
 
-	args := flag.Args()
+	tc, err := tuco.Load()
 
-	if err := factorio.Port(args); err != nil {
+	if err != nil {
 		log.Fatal(err)
+	}
+
+	if *flagClean {
+		if err2 := tc.Clean(); err2 != nil {
+			log.Fatal(err2)
+		}
+
+		os.Exit(0)
+	}
+
+	if err2 := tc.Run(); err2 != nil {
+		log.Fatal(err2)
 	}
 }
