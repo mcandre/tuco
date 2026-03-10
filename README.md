@@ -40,7 +40,7 @@ For more platforms and installation methods, see our [install guide](INSTALL.md)
 
 # ABOUT
 
-tuco elevates the Go compilation experience, taking care of many low level tasks. So that you can focus on developing your application.
+tuco automates more low level steps involved in managing crosscompilation for Go projects. So that you can focus on developing your application.
 
 # FEATURES
 
