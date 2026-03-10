@@ -52,7 +52,7 @@ tuco automates more low level steps involved in managing crosscompilation for Go
 
 # CONFIGURATION
 
-For details on tuning tuco, see our [configuration guide](CONFIGURATION).
+For details on tuning tuco, see our [configuration guide](CONFIGURATION.md).
 
 # RESOURCES
 
