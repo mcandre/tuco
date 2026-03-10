@@ -14,6 +14,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"strings"
 	"sync"
 )
@@ -27,6 +28,12 @@ const DefaultArtifacts = "bin"
 
 // DefaultJobs denotes the default number of goroutines.
 const DefaultJobs uint = 4
+
+// DefaultExcludes collects file path patterns to strip from archives.
+var DefaultExcludes = []string{
+	".DS_Store",
+	"Thumbs.db",
+}
 
 // Port models a basic targetable execution configuration.
 type Port struct {
@@ -94,7 +101,13 @@ type Tuco struct {
 	Banner string `yaml:"banner"`
 
 	// Jobs limits the number of goroutines (default: `DefaultJobs`).
-	Jobs uint `yaml:"jobs"`
+	Jobs uint `yaml:"jobs,omitempty"`
+
+	// Excludes skips matching file paths from archival.
+	//
+	// Glob syntax
+	// https://pkg.go.dev/path/filepath#Match
+	Excludes []string `yaml:"excludes,omitempty"`
 
 	// GoArgs collects additional `go build`... CLI flags
 	GoArgs []string `yaml:"go_args,omitempty"`
@@ -129,6 +142,15 @@ func (o *Tuco) UpdateMaxPortLen() {
 	o.maxPortLen = maxPortLen
 }
 
+// NewTuco constructs a default Tuco.
+func NewTuco() Tuco {
+	var tc Tuco
+	tc.Artifacts = DefaultArtifacts
+	tc.Jobs = DefaultJobs
+	tc.Excludes = DefaultExcludes
+	return tc
+}
+
 // Load constructs a Tuco from `ConfigurationFilename`.
 func Load() (*Tuco, error) {
 	tucoYAMLBytes, err := os.ReadFile(ConfigurationFilename)
@@ -137,18 +159,10 @@ func Load() (*Tuco, error) {
 		return nil, err
 	}
 
-	var tc Tuco
+	tc := NewTuco()
 
 	if err := yaml.Unmarshal(tucoYAMLBytes, &tc); err != nil {
 		return nil, err
-	}
-
-	if tc.Artifacts == "" {
-		tc.Artifacts = DefaultArtifacts
-	}
-
-	if tc.Jobs == 0 {
-		tc.Jobs = DefaultJobs
 	}
 
 	tc.UpdateTarballRoot()
@@ -212,6 +226,25 @@ func (o Tuco) Archive(port Port, outputPth string) error {
 
 		basename := entry.Name()
 		sourcePth := path.Join(outputPth, basename)
+
+		var isExcluded bool
+
+		for _, exclusion := range o.Excludes {
+			m, err := filepath.Match(exclusion, basename)
+
+			if err != nil {
+				return err
+			}
+
+			if m {
+				isExcluded = true
+				break
+			}
+		}
+
+		if isExcluded {
+			continue
+		}
 
 		if !info.Mode().IsRegular() {
 			return fmt.Errorf("unsupported file system file type for path: %s", sourcePth)

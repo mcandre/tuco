@@ -54,19 +54,6 @@ Example:
 banner = "hello"
 ```
 
-## `go_args`
-
-Default: (empty)
-
-Supply additional CLI arguments to `go build`... commands.
-
-Example:
-
-```yaml
-go_args:
-- "-v"
-```
-
 ## `ports`
 
 Target Go [ports](https://go.dev/wiki/PortingPolicy).
@@ -86,3 +73,38 @@ ports:
 ```
 
 To enumerate available ports, run `go tool dist list`.
+
+## `excludes`
+
+Default:
+
+```yaml
+- ".DS_Store" # Finder
+- "Thumbs.db" # Explorer
+```
+
+Skips corresponding file path patterns.
+
+Syntax: [Glob](https://pkg.go.dev/path/filepath#Match)
+
+Example:
+
+```yaml
+excludes:
+- ".DS_Store"  # Finder
+- ".directory" # Dolpin
+- "Thumbs.db"  # Explorer
+```
+
+## `go_args`
+
+Default: (empty)
+
+Supply additional CLI arguments to `go build`... commands.
+
+Example:
+
+```yaml
+go_args:
+- "-v"
+```
