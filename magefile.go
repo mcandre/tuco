@@ -20,13 +20,7 @@ func Audit() error { return Govulncheck() }
 func Clean() error { mg.Deps(CleanExample); return CleanArtifacts() }
 
 // CleanArtifacts removes artifacts.
-func CleanArtifacts() error {
-	cmd := exec.Command("tuco", "-clean")
-	cmd.Env = os.Environ()
-	cmd.Stderr = os.Stderr
-	cmd.Stdout = os.Stdout
-	return cmd.Run()
-}
+func CleanArtifacts() error { return mageextras.Tuco("-clean") }
 
 // CleanEample removes artifacts from example projects.
 func CleanExample() error {
