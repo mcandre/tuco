@@ -6,10 +6,6 @@ banner: "tuco"
 # go_args:
 # - "-v"
 
-# excludes:
-# - ".DS_Store"
-# - "Thumbs.db"
-
 #
 # Go Ports
 # go tool dist list
