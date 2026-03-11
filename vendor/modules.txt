@@ -18,20 +18,20 @@ github.com/magefile/mage/mage
 github.com/magefile/mage/mg
 github.com/magefile/mage/parse
 github.com/magefile/mage/sh
-# github.com/mcandre/mage-extras v0.0.34
+# github.com/mcandre/mage-extras v0.0.36
 ## explicit; go 1.26.1
 github.com/mcandre/mage-extras
 # golang.org/x/exp/typeparams v0.0.0-20250408133849-7e4ce0ab07d0
 ## explicit; go 1.23.0
 golang.org/x/exp/typeparams
-# golang.org/x/mod v0.24.0
-## explicit; go 1.23.0
+# golang.org/x/mod v0.33.0
+## explicit; go 1.24.0
 golang.org/x/mod/semver
-# golang.org/x/sync v0.13.0
-## explicit; go 1.23.0
+# golang.org/x/sync v0.19.0
+## explicit; go 1.24.0
 golang.org/x/sync/errgroup
-# golang.org/x/tools v0.32.0
-## explicit; go 1.23.0
+# golang.org/x/tools v0.42.0
+## explicit; go 1.24.0
 golang.org/x/tools/go/analysis
 golang.org/x/tools/go/analysis/checker
 golang.org/x/tools/go/analysis/internal
@@ -41,6 +41,7 @@ golang.org/x/tools/go/analysis/passes/inspect
 golang.org/x/tools/go/analysis/singlechecker
 golang.org/x/tools/go/analysis/unitchecker
 golang.org/x/tools/go/ast/astutil
+golang.org/x/tools/go/ast/edge
 golang.org/x/tools/go/ast/inspector
 golang.org/x/tools/go/buildutil
 golang.org/x/tools/go/gcexportdata
@@ -50,9 +51,8 @@ golang.org/x/tools/go/packages
 golang.org/x/tools/go/types/objectpath
 golang.org/x/tools/go/types/typeutil
 golang.org/x/tools/internal/aliases
-golang.org/x/tools/internal/analysisinternal
-golang.org/x/tools/internal/astutil/cursor
-golang.org/x/tools/internal/astutil/edge
+golang.org/x/tools/internal/analysis/driverutil
+golang.org/x/tools/internal/astutil/free
 golang.org/x/tools/internal/diff
 golang.org/x/tools/internal/diff/lcs
 golang.org/x/tools/internal/event

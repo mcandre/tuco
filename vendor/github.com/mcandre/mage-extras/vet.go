@@ -2,7 +2,6 @@ package mageextras
 
 import (
 	"fmt"
-	"os"
 	"os/exec"
 )
 
@@ -22,12 +21,9 @@ func GoVetShadow() error {
 
 // GoVet runs go vet against all Go packages in a project.
 func GoVet(args ...string) error {
-	cmd := exec.Command("go")
-	cmd.Args = append(cmd.Args, "vet")
-	cmd.Args = append(cmd.Args, args...)
-	cmd.Args = append(cmd.Args, AllPackagesPath)
-	cmd.Env = os.Environ()
-	cmd.Stderr = os.Stderr
-	cmd.Stdout = os.Stdout
-	return cmd.Run()
+	var as []string
+	as = append(as, "vet")
+	as = append(as, args...)
+	as = append(as, AllPackagesPath)
+	return Run("go", as...)
 }

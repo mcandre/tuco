@@ -42,8 +42,8 @@ func CollectGoFiles() error {
 		AllPackagesPath,
 	)
 	cmdSource.Env = os.Environ()
-	cmdSource.Stdout = &sourceOut
 	cmdSource.Stderr = os.Stderr
+	cmdSource.Stdout = &sourceOut
 
 	if err := cmdSource.Run(); err != nil {
 		return err
@@ -66,8 +66,8 @@ func CollectGoFiles() error {
 		AllPackagesPath,
 	)
 	cmdTest.Env = os.Environ()
-	cmdTest.Stdout = &testOut
 	cmdTest.Stderr = os.Stderr
+	cmdTest.Stdout = &testOut
 
 	if err := cmdTest.Run(); err != nil {
 		return err

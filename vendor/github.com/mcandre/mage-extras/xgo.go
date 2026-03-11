@@ -2,7 +2,6 @@ package mageextras
 
 import (
 	"os"
-	"os/exec"
 )
 
 // Xgo cross-compiles (c)Go binaries with additional targets enabled.
@@ -11,17 +10,9 @@ func Xgo(outputPath string, args ...string) error {
 		return err
 	}
 
-	var xgoParts []string
-	xgoParts = append(xgoParts, "-dest")
-	xgoParts = append(xgoParts, outputPath)
-	xgoParts = append(xgoParts, args...)
-
-	cmd := exec.Command(
-		"xgo",
-		xgoParts...,
-	)
-	cmd.Env = os.Environ()
-	cmd.Stderr = os.Stderr
-	cmd.Stdout = os.Stdout
-	return cmd.Run()
+	var as []string
+	as = append(as, "-dest")
+	as = append(as, outputPath)
+	as = append(as, args...)
+	return Run("xgo", as...)
 }

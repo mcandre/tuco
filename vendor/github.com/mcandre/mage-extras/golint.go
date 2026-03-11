@@ -1,9 +1,6 @@
 package mageextras
 
 import (
-	"os"
-	"os/exec"
-
 	"github.com/magefile/mage/mg"
 )
 
@@ -11,20 +8,12 @@ import (
 func GoLint(args ...string) error {
 	mg.Deps(CollectGoFiles)
 
-	cmdName := "golint"
-
 	for pth := range CollectedGoFiles {
-		cmdParameters := []string{cmdName}
-		cmdParameters = append(cmdParameters, args...)
-		cmdParameters = append(cmdParameters, pth)
+		var as []string
+		as = append(as, args...)
+		as = append(as, pth)
 
-		cmd := exec.Command(cmdName)
-		cmd.Env = os.Environ()
-		cmd.Args = cmdParameters
-		cmd.Stderr = os.Stderr
-		cmd.Stdout = os.Stdout
-
-		if err := cmd.Run(); err != nil {
+		if err := Run("golint", as...); err != nil {
 			return err
 		}
 	}

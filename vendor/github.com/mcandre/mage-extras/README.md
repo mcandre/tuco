@@ -1,6 +1,6 @@
 # mage-extras: some predefined tasks for common mage workflows
 
-[![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/mcandre/mage-extras) [![Test](https://github.com/mcandre/mage-extras/actions/workflows/test.yml/badge.svg)](https://github.com/mcandre/mage-extras/actions/workflows/test.yml) [![license](https://img.shields.io/badge/license-BSD-0)](LICENSE.md) [![Donate](https://img.shields.io/badge/-any?logo=gumroad&label=Donate&color=grey)](https://mcandre.gumroad.com/)
+[![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/mcandre/mage-extras) [![Test](https://github.com/mcandre/mage-extras/actions/workflows/test.yml/badge.svg)](https://github.com/mcandre/mage-extras/actions/workflows/test.yml) [![license](https://img.shields.io/badge/license-BSD-0)](LICENSE.md)
 
 # SUMMARY
 

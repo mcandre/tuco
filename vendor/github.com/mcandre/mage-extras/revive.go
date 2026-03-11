@@ -1,18 +1,10 @@
 package mageextras
 
-import (
-	"os"
-	"os/exec"
-)
-
 // Revive runs revive.
 func Revive(args ...string) error {
-	cmd := exec.Command("revive")
-	cmd.Args = append(cmd.Args, "-exclude", "vendor/...")
-	cmd.Args = append(cmd.Args, args...)
-	cmd.Args = append(cmd.Args, "./...")
-	cmd.Env = os.Environ()
-	cmd.Stderr = os.Stderr
-	cmd.Stdout = os.Stdout
-	return cmd.Run()
+	var as []string
+	as = append(as, "-exclude", "vendor/...")
+	as = append(as, args...)
+	as = append(as, AllPackagesPath)
+	return Run("revive", as...)
 }

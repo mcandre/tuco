@@ -20,23 +20,24 @@ func Audit() error { return Govulncheck() }
 func Clean() error { mg.Deps(CleanExample); return CleanArtifacts() }
 
 // CleanArtifacts removes artifacts.
-func CleanArtifacts() error { return mageextras.Tuco("-clean") }
+func CleanArtifacts() error { return mageextras.Run("tuco", "-clean") }
 
 // CleanEample removes artifacts from example projects.
 func CleanExample() error {
 	cmd := exec.Command("tuco", "-clean")
+	cmd.Dir = "example"
 	cmd.Env = os.Environ()
 	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
-	cmd.Dir = "example"
 	return cmd.Run()
 }
 
 // Deadcode runs deadcode.
-func Deadcode() error { return mageextras.Deadcode("./...") }
+func Deadcode() error { return mageextras.Run("deadcode", "./...") }
 
 // Errcheck runs errcheck.
-func Errcheck() error { return mageextras.Errcheck("-blank") }
+func Errcheck() error { return mageextras.Run("errcheck", "-blank") }
 
 // GoImports runs goimports.
 func GoImports() error { return mageextras.GoImports("-w") }
@@ -45,7 +46,7 @@ func GoImports() error { return mageextras.GoImports("-w") }
 func GoVet() error { return mageextras.GoVet() }
 
 // Govulncheck runs govulncheck.
-func Govulncheck() error { return mageextras.Govulncheck("-scan", "package", "./...") }
+func Govulncheck() error { return mageextras.Run("govulncheck", "-scan", "package", "./...") }
 
 // Install builds and installs Go applications.
 func Install() error { return mageextras.Install() }
@@ -69,10 +70,10 @@ func Nakedret() error { return mageextras.Nakedret("-l", "0") }
 func Shadow() error { return mageextras.GoVetShadow() }
 
 // Staticcheck runs staticcheck.
-func Staticcheck() error { return mageextras.Staticcheck("./...") }
+func Staticcheck() error { return mageextras.Run("staticcheck", "./...") }
 
 // Tuco builds crossplatform binaries and tarballs.
-func Tuco() error { return mageextras.Tuco() }
+func Tuco() error { return mageextras.Run("tuco") }
 
 // Test runs a test suite.
 func Test() error { return mageextras.UnitTest() }

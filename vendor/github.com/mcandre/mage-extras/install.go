@@ -2,7 +2,6 @@ package mageextras
 
 import (
 	"os"
-	"os/exec"
 	"path"
 
 	"github.com/magefile/mage/mg"
@@ -10,14 +9,11 @@ import (
 
 // Install builds and installs Go applications.
 func Install(args ...string) error {
-	cmd := exec.Command("go")
-	cmd.Args = append(cmd.Args, "install")
-	cmd.Args = append(cmd.Args, args...)
-	cmd.Args = append(cmd.Args, AllPackagesPath)
-	cmd.Env = os.Environ()
-	cmd.Stderr = os.Stderr
-	cmd.Stdout = os.Stdout
-	return cmd.Run()
+	var as []string
+	as = append(as, "install")
+	as = append(as, args...)
+	as = append(as, AllPackagesPath)
+	return Run("go", as...)
 }
 
 // Uninstall deletes installed Go applications.
