@@ -58,6 +58,7 @@ For details on tuning tuco, see our [configuration guide](CONFIGURATION.md).
 
 Prior art, personal plugs, and tools for developing portable applications (including non-Go projects)!
 
+* [goreleaser](https://goreleaser.com/) - opinionated Go multiplexer
 * [mcandre/crit](https://github.com/mcandre/crit) - Rust multiplexer
 * [mcandre/rockhopper](https://github.com/mcandre/rockhopper) - OS package multiplexer
 * [tree](https://en.wikipedia.org/wiki/Tree_(command)) - an CLI file manager
