@@ -2,8 +2,6 @@
 package tuco
 
 import (
-	"gopkg.in/yaml.v3"
-
 	"archive/tar"
 	"bufio"
 	"compress/gzip"
@@ -17,6 +15,9 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+
+	"github.com/magefile/mage/sh"
+	"gopkg.in/yaml.v3"
 )
 
 // ConfigurationFilename denotes the location of the tuco configuration file,
@@ -172,7 +173,7 @@ func Load() (*Tuco, error) {
 
 // Clean removes artifacts.
 func (o Tuco) Clean() error {
-	return os.RemoveAll(o.Artifacts)
+	return sh.Rm(o.Artifacts)
 }
 
 // Archive compresses Go applications in conventional UNIX TGZ format.

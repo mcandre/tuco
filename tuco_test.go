@@ -1,9 +1,9 @@
 package tuco_test
 
 import (
-	"github.com/mcandre/tuco"
-
 	"testing"
+
+	"github.com/mcandre/tuco"
 )
 
 func TestPortMarshalingSymmetric(t *testing.T) {

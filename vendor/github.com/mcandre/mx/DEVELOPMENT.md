@@ -1,6 +1,6 @@
 # DEVELOPMENT GUIDE
 
-mage-extras follows standard, Go based operations for compiling and unit testing Go code.
+mx follows standard, Go based operations for compiling and unit testing Go code.
 
 For advanced operations, such as linting, we further supplement with some software industry tools.
 

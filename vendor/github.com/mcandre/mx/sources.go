@@ -1,4 +1,4 @@
-package mageextras
+package mx
 
 import (
 	"bufio"
@@ -39,7 +39,7 @@ func CollectGoFiles() error {
 		"list",
 		"-f",
 		GoListSourceFilesTemplate,
-		AllPackagesPath,
+		"./...",
 	)
 	cmdSource.Env = os.Environ()
 	cmdSource.Stderr = os.Stderr
@@ -63,7 +63,7 @@ func CollectGoFiles() error {
 		"list",
 		"-f",
 		GoListTestFilesTemplate,
-		AllPackagesPath,
+		"./...",
 	)
 	cmdTest.Env = os.Environ()
 	cmdTest.Stderr = os.Stderr

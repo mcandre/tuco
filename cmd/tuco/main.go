@@ -2,13 +2,13 @@
 package main
 
 import (
-	"github.com/mcandre/tuco"
-
 	"flag"
 	"fmt"
 	"log"
 	"os"
 	"sort"
+
+	"github.com/mcandre/tuco"
 )
 
 var flagClean = flag.Bool("clean", false, "remove artifacts")

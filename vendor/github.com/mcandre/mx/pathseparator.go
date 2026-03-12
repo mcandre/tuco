@@ -1,4 +1,4 @@
-package mageextras
+package mx
 
 import (
 	"os"

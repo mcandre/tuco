@@ -3,11 +3,12 @@
 package main
 
 import (
-	"github.com/magefile/mage/mg"
-	mageextras "github.com/mcandre/mage-extras"
-
 	"os"
 	"os/exec"
+
+	"github.com/magefile/mage/mg"
+	"github.com/magefile/mage/sh"
+	"github.com/mcandre/mx"
 )
 
 // Default references the default build task.
@@ -20,7 +21,7 @@ func Audit() error { return Govulncheck() }
 func Clean() error { mg.Deps(CleanExample); return CleanArtifacts() }
 
 // CleanArtifacts removes artifacts.
-func CleanArtifacts() error { return mageextras.Run("tuco", "-clean") }
+func CleanArtifacts() error { return sh.RunV("tuco", "-clean") }
 
 // CleanEample removes artifacts from example projects.
 func CleanExample() error {
@@ -34,22 +35,22 @@ func CleanExample() error {
 }
 
 // Deadcode runs deadcode.
-func Deadcode() error { return mageextras.Run("deadcode", "./...") }
+func Deadcode() error { return sh.RunV("deadcode", "./...") }
 
 // Errcheck runs errcheck.
-func Errcheck() error { return mageextras.Run("errcheck", "-blank") }
+func Errcheck() error { return sh.RunV("errcheck", "-blank") }
 
 // GoImports runs goimports.
-func GoImports() error { return mageextras.GoImports("-w") }
+func GoImports() error { return mx.GoImports("-w") }
 
 // GoVet runs default go vet analyzers.
-func GoVet() error { return mageextras.GoVet() }
+func GoVet() error { return mx.GoVet() }
 
 // Govulncheck runs govulncheck.
-func Govulncheck() error { return mageextras.Run("govulncheck", "-scan", "package", "./...") }
+func Govulncheck() error { return sh.RunV("govulncheck", "-scan", "package", "./...") }
 
 // Install builds and installs Go applications.
-func Install() error { return mageextras.Install() }
+func Install() error { return mx.Install() }
 
 // Lint runs the linter suite.
 func Lint() error {
@@ -64,19 +65,19 @@ func Lint() error {
 }
 
 // Nakedret runs nakedret.
-func Nakedret() error { return mageextras.Nakedret("-l", "0") }
+func Nakedret() error { return mx.Nakedret("-l", "0") }
 
 // Shadow runs go vet with shadow checks enabled.
-func Shadow() error { return mageextras.GoVetShadow() }
+func Shadow() error { return mx.GoVetShadow() }
 
 // Staticcheck runs staticcheck.
-func Staticcheck() error { return mageextras.Run("staticcheck", "./...") }
+func Staticcheck() error { return sh.RunV("staticcheck", "./...") }
 
 // Tuco builds crossplatform binaries and tarballs.
-func Tuco() error { return mageextras.Run("tuco") }
+func Tuco() error { return sh.RunV("tuco") }
 
 // Test runs a test suite.
-func Test() error { return mageextras.UnitTest() }
+func Test() error { return mx.UnitTest() }
 
 // Uninstall deletes installed Go applications.
-func Uninstall() error { return mageextras.Uninstall("tuco") }
+func Uninstall() error { return mx.Uninstall("tuco") }

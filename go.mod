@@ -3,8 +3,8 @@ module github.com/mcandre/tuco
 go 1.26.1
 
 require (
-	github.com/magefile/mage v1.16.0
-	github.com/mcandre/mage-extras v0.0.36
+	github.com/magefile/mage v1.16.1
+	github.com/mcandre/mx v0.0.43
 	gopkg.in/yaml.v3 v3.0.1
 )
 
