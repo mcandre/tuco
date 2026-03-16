@@ -36,7 +36,7 @@ go install github.com/mcandre/tuco/cmd/tuco@latest
 
 * [Go](https://go.dev/)
 
-For more platforms and installation methods, see our [install guide](INSTALL.md).
+For more information on developing tuco, see our [development guide](DEVELOPMENT.md).
 
 # ABOUT
 

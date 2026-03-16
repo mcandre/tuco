@@ -18,10 +18,7 @@ var Default = Test
 func Audit() error { return Govulncheck() }
 
 // Clean removes artifacts.
-func Clean() error { mg.Deps(CleanExample); return CleanArtifacts() }
-
-// CleanArtifacts removes artifacts.
-func CleanArtifacts() error { return sh.RunV("tuco", "-clean") }
+func Clean() error { return CleanExample() }
 
 // CleanEample removes artifacts from example projects.
 func CleanExample() error {
@@ -72,9 +69,6 @@ func Shadow() error { return mx.GoVetShadow() }
 
 // Staticcheck runs staticcheck.
 func Staticcheck() error { return sh.RunV("staticcheck", "./...") }
-
-// Tuco builds crossplatform binaries and tarballs.
-func Tuco() error { return sh.RunV("tuco") }
 
 // Test runs a test suite.
 func Test() error { return mx.UnitTest() }
