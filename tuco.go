@@ -32,10 +32,12 @@ const DefaultArtifacts = "bin"
 // DefaultJobs denotes the default number of goroutines.
 const DefaultJobs uint = 4
 
-// DefaultExcludes collects file path patterns to strip from archives.
-var DefaultExcludes = []string{
-	".DS_Store",
-	"Thumbs.db",
+// DefaultExcludes generates file path patterns to strip from archives.
+func DefaultExcludes() []string {
+	return []string{
+		".DS_Store",
+		"Thumbs.db",
+	}
 }
 
 // Port models a basic targetable execution configuration.
@@ -156,7 +158,7 @@ func NewTuco() Tuco {
 	var tc Tuco
 	tc.Artifacts = DefaultArtifacts
 	tc.Jobs = DefaultJobs
-	tc.Excludes = DefaultExcludes
+	tc.Excludes = DefaultExcludes()
 	return tc
 }
 
