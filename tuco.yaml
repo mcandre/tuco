@@ -20,13 +20,13 @@ os:
 - "freebsd"
 - "illumos"
 # - "ios"
-- "js"
+# - "js"
 - "linux"
 - "netbsd"
 - "openbsd"
 - "plan9"
 - "solaris"
-- "wasip1"
+# - "wasip1"
 - "windows"
 
 arch:
