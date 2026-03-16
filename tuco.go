@@ -184,13 +184,28 @@ func Load() (*Tuco, error) {
 	return &tc, nil
 }
 
+// Prefix generates log namespaces.
+func (o Tuco) Prefix(port Port) string {
+	portPadded := fmt.Sprintf("%-*s", o.maxPortLen, port)
+	return fmt.Sprintf("[ %s ] ", portPadded)
+}
+
+// ExecutableOutputPath generates file paths for executables.
+func (o Tuco) ExecutableOutputPath(port Port) string {
+	return path.Join(o.Artifacts, o.Banner, port.String())
+}
+
 // Clean removes artifacts.
 func (o Tuco) Clean() error {
 	return sh.Rm(o.Artifacts)
 }
 
 // Archive compresses Go applications in conventional UNIX TGZ format.
-func (o Tuco) Archive(port Port, outputPth string) error {
+func (o Tuco) Archive(port Port) error {
+	prefix := o.Prefix(port)
+
+	log.Printf("%sarchiving\n", prefix)
+
 	tarballRoot := o.tarballRoot
 	tarballBasename := fmt.Sprintf("%s-%s-%s.tgz", o.Banner, port.Os, port.Arch)
 	tarball := path.Join(tarballRoot, tarballBasename)
@@ -219,6 +234,7 @@ func (o Tuco) Archive(port Port, outputPth string) error {
 		}
 	}()
 
+	outputPth := o.ExecutableOutputPath(port)
 	entries, err := os.ReadDir(outputPth)
 
 	if err != nil {
@@ -317,8 +333,7 @@ func prefixStream(prefix string, wg *sync.WaitGroup, r io.Reader) {
 
 // Build generates binaries for the given port.
 func (o Tuco) Build(port Port) error {
-	portPadded := fmt.Sprintf("%-*s", o.maxPortLen, port)
-	prefix := fmt.Sprintf("[ %s ] ", portPadded)
+	prefix := o.Prefix(port)
 
 	log.Printf("%scompiling\n", prefix)
 
@@ -330,7 +345,7 @@ func (o Tuco) Build(port Port) error {
 		return errors.New("blank banner")
 	}
 
-	outputPth := path.Join(o.Artifacts, o.Banner, port.String())
+	outputPth := o.ExecutableOutputPath(port)
 
 	if err := os.MkdirAll(outputPth, 0755); err != nil {
 		return err
@@ -379,9 +394,7 @@ func (o Tuco) Build(port Port) error {
 		return fmt.Errorf("%serror: %v", prefix, err)
 	}
 
-	log.Printf("%sarchiving\n", prefix)
-
-	return o.Archive(port, outputPth)
+	return o.Archive(port)
 }
 
 func (o *Tuco) UpdatePortCache() error {
@@ -508,13 +521,11 @@ func (o *Tuco) Run() []error {
 	var m sync.Mutex
 	var wg sync.WaitGroup
 	wg.Add(len(ports))
-	jobsCh := make(chan Port)
+	buildJobsCh := make(chan Port)
 
 	for w := uint(1); w <= o.Jobs; w++ {
 		go func(wg *sync.WaitGroup, m *sync.Mutex, errs *[]error) {
-			for {
-				port := <-jobsCh
-
+			for port := range buildJobsCh {
 				if err := o.Build(port); err != nil {
 					m.Lock()
 					*errs = append(*errs, err)
@@ -527,7 +538,7 @@ func (o *Tuco) Run() []error {
 	}
 
 	for _, port := range ports {
-		jobsCh <- port
+		buildJobsCh <- port
 	}
 
 	wg.Wait()
@@ -535,6 +546,10 @@ func (o *Tuco) Run() []error {
 	if len(errs) != 0 {
 		return errs
 	}
+
+	// log.Printf("%sarchiving\n", prefix)
+
+	// return o.Archive(port, outputPth)
 
 	log.Printf("binaries archived: %s\n", tarballRoot)
 
