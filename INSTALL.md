@@ -38,7 +38,7 @@ Remove the application executables from the selected directory.
 * DragonflyBSD (Intel)
 * FreeBSD (ARM, Intel)
 * Illumos (Intel)
-* Linux (ARM, Intel, LoongArch, MIPS, MIPS LE, PowerPC, PowerPC LE, RISC-V, s390x)
+* Linux (ARM, Intel, LoongArch, PowerPC, RISC-V, s390x)
 * macOS 26 Tahoe+ (ARM, Intel)
 * NetBSD (ARM, Intel)
 * OpenBSD (ARM, Intel, PowerPC, RISC-V)
