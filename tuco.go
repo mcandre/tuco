@@ -4,6 +4,7 @@ package tuco
 import (
 	"archive/tar"
 	"bufio"
+	"bytes"
 	"compress/gzip"
 	"errors"
 	"fmt"
@@ -13,6 +14,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync"
 
@@ -113,8 +115,14 @@ type Tuco struct {
 	// GoArgs collects additional `go build`... CLI flags
 	GoArgs []string `yaml:"go_args,omitempty"`
 
-	// Ports collects target ports.
-	Ports []Port `yaml:"ports,omitempty"`
+	// Os enables matching Go ports by GOOS.
+	Os []string `yaml:"os,omitempty"`
+
+	// Arch enables matching Go ports by GOARCH.
+	Arch []string `yaml:"arch,omitempty"`
+
+	// ports caches target ports.
+	ports []Port `yaml:"-"`
 
 	// tarballRoot caches the root directory for binary archives.
 	tarballRoot string `yaml:"-"`
@@ -132,7 +140,7 @@ func (o *Tuco) UpdateTarballRoot() {
 func (o *Tuco) UpdateMaxPortLen() {
 	var maxPortLen int
 
-	for _, port := range o.Ports {
+	for _, port := range o.ports {
 		portLen := len(port.String())
 
 		if portLen > maxPortLen {
@@ -167,6 +175,11 @@ func Load() (*Tuco, error) {
 	}
 
 	tc.UpdateTarballRoot()
+
+	if err := tc.UpdatePortCache(); err != nil {
+		return nil, err
+	}
+
 	tc.UpdateMaxPortLen()
 	return &tc, nil
 }
@@ -371,13 +384,115 @@ func (o Tuco) Build(port Port) error {
 	return o.Archive(port, outputPth)
 }
 
-// Run crosscompiles and archives Go applications.
-func (o Tuco) Run() []error {
-	ports := o.Ports
-	portsLen := len(ports)
+func (o *Tuco) UpdatePortCache() error {
+	cmd := exec.Command("go", "tool", "dist", "list")
+	cmd.Env = os.Environ()
+	cmd.Stderr = os.Stderr
 
-	if portsLen == 0 {
-		log.Println("warning: empty ports")
+	stdout, err := cmd.Output()
+
+	if err != nil {
+		return err
+	}
+
+	scanner := bufio.NewScanner(bytes.NewReader(stdout))
+	var availablePorts []Port
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		port, err2 := ParsePort(line)
+
+		if err2 != nil {
+			return err2
+		}
+
+		availablePorts = append(availablePorts, *port)
+	}
+
+	goosList := o.Os
+	goarchList := o.Arch
+
+	for _, goos := range goosList {
+		var foundGoos bool
+
+		for _, port := range availablePorts {
+			if port.Os == goos {
+				foundGoos = true
+				break
+			}
+		}
+
+		if !foundGoos {
+			return fmt.Errorf("invalid os: %s", goos)
+		}
+	}
+
+	for _, goarch := range goarchList {
+		var foundGoArch bool
+
+		for _, port := range availablePorts {
+			if port.Arch == goarch {
+				foundGoArch = true
+				break
+			}
+		}
+
+		if !foundGoArch {
+			return fmt.Errorf("invalid arch: %s", goarch)
+		}
+	}
+
+	var enabledPorts []Port
+
+	for _, port := range availablePorts {
+		var enabledGoos bool
+
+		for _, goos := range goosList {
+			if port.Os == goos {
+				enabledGoos = true
+				break
+			}
+		}
+
+		var enabledGoarch bool
+
+		for _, goarch := range goarchList {
+			if port.Arch == goarch {
+				enabledGoarch = true
+				break
+			}
+		}
+
+		if enabledGoos && enabledGoarch {
+			enabledPorts = append(enabledPorts, port)
+		}
+	}
+
+	sort.Slice(enabledPorts, func(i, j int) bool {
+		if enabledPorts[i].Os == enabledPorts[j].Os {
+			return enabledPorts[i].Arch < enabledPorts[j].Arch
+		}
+		return enabledPorts[i].Os < enabledPorts[j].Os
+	})
+	o.ports = enabledPorts
+	return nil
+}
+
+// Run crosscompiles and archives Go applications.
+func (o *Tuco) Run() []error {
+	goos := o.Os
+	goosLen := len(goos)
+
+	if goosLen == 0 {
+		log.Println("warning: empty os")
+		return nil
+	}
+
+	goarch := o.Arch
+	goarchLen := len(goarch)
+
+	if goarchLen == 0 {
+		log.Println("warning: empty arch")
 		return nil
 	}
 
@@ -389,9 +504,10 @@ func (o Tuco) Run() []error {
 		return errs
 	}
 
+	ports := o.ports
 	var m sync.Mutex
 	var wg sync.WaitGroup
-	wg.Add(portsLen)
+	wg.Add(len(ports))
 	jobsCh := make(chan Port)
 
 	for w := uint(1); w <= o.Jobs; w++ {
@@ -410,7 +526,7 @@ func (o Tuco) Run() []error {
 		}(&wg, &m, &errs)
 	}
 
-	for _, port := range o.Ports {
+	for _, port := range ports {
 		jobsCh <- port
 	}
 

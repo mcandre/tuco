@@ -54,25 +54,61 @@ Example:
 banner = "hello"
 ```
 
-## `ports`
+## Go Ports
 
 Target Go [ports](https://go.dev/wiki/PortingPolicy).
+
+To enumerate available ports, run `go tool dist list`.
+
+### `os`
+
+Enable GOOS values.
 
 Example:
 
 ```yaml
-ports:
-- "darwin/amd64"
-- "darwin/arm64"
-- "linux/amd64"
-- "linux/arm64"
-- "linux/riscv64"
-- "windows/amd64"
-- "windows/arm64"
-# ...
+# Skip mobile SDKs
+os:
+- "aix"
+# - "android"
+- "darwin"
+- "dragonfly"
+- "freebsd"
+- "illumos"
+# - "ios"
+- "js"
+- "linux"
+- "netbsd"
+- "openbsd"
+- "plan9"
+- "solaris"
+- "wasip1"
+- "windows"
 ```
 
-To enumerate available ports, run `go tool dist list`.
+### `arch`
+
+Enable GOARCH values.
+
+Example:
+
+```yaml
+arch:
+- "386"
+- "amd64"
+- "arm"
+- "arm64"
+- "loong64"
+- "mips"
+- "mips64"
+- "mips64le"
+- "mipsle"
+- "ppc64"
+- "ppc64le"
+- "riscv64"
+- "s390x"
+- "wasm"
+```
 
 ## `excludes`
 
