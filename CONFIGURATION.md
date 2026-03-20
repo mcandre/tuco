@@ -1,22 +1,10 @@
-# CONFIGURATION GUIDE
+# CONFIGURATION
 
-# FLAGS
+tuco uses [YAML](https://yaml.org/) syntax for configuration files.
 
-## `-clean`
+# tuco.yaml
 
-Remove artifacts.
-
-## `-help`
-
-Show usage menu.
-
-## `-version`
-
-Show version identifier.
-
-# YAML
-
-tuco looks for a configuration file `tuco.yaml` in the current working directory.
+tuco reads a configuration file `tuco.yaml` in the current working directory.
 
 ## `debug`
 

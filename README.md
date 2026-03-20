@@ -22,10 +22,6 @@ hello-darwin-arm64.tgz
 ...
 ```
 
-For more CLI option, run `tuco -help`.
-
-For more ports, run `go tool dist list`.
-
 # DOWNLOAD
 
 ```sh
@@ -36,7 +32,9 @@ go install github.com/mcandre/tuco/cmd/tuco@latest
 
 * [Go](https://go.dev/)
 
-For more information on developing tuco, see our [development guide](DEVELOPMENT.md).
+For details on tuning tuco, see [CONFIGURATION](CONFIGURATION.md).
+
+For details on building from source, see [DEVELOPMENT](DEVELOPMENT.md).
 
 # ABOUT
 
@@ -50,10 +48,6 @@ tuco automates more low level steps involved in managing crosscompilation for Go
 * Few dependencies
 * Automatically corrects chmod bits inside tarballs
 * Logical directory structure for straightforward binary based OS packaging
-
-# CONFIGURATION
-
-For details on tuning tuco, see our [configuration guide](CONFIGURATION.md).
 
 # RESOURCES
 

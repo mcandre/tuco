@@ -12,10 +12,13 @@ import (
 )
 
 // Default references the default build task.
-var Default = Test
+var Default = Build
 
 // Audit runs security checks.
 func Audit() error { return Govulncheck() }
+
+// Build compiles Go projects.
+func Build() error { return sh.RunV("go", "build", "./...") }
 
 // Clean removes artifacts.
 func Clean() error { return CleanExample() }
