@@ -6,7 +6,7 @@ tuco uses [YAML](https://yaml.org/) syntax for configuration files.
 
 tuco reads a configuration file `tuco.yaml` in the current working directory.
 
-## `debug`
+# `debug`
 
 Default: `false`
 
@@ -18,7 +18,7 @@ Example:
 debug: true
 ```
 
-## `artifacts`
+# `artifacts`
 
 Default: `"bin"`
 
@@ -30,7 +30,7 @@ Example:
 artifacts: "dist"
 ```
 
-## `banner`
+# `banner`
 
 Required, nonblank.
 
@@ -42,13 +42,38 @@ Example:
 banner = "hello"
 ```
 
-## Go Ports
+# `jobs`
+
+Default: 4
+
+Customize concurrent Go worker limit.
+
+Example:
+
+```yaml
+jobs: 8
+```
+
+# `go_args`
+
+Default: (empty)
+
+Supply additional CLI arguments to `go build`... commands.
+
+Example:
+
+```yaml
+go_args:
+- "-v"
+```
+
+# Go Ports
 
 Target Go [ports](https://go.dev/wiki/PortingPolicy).
 
 To enumerate available ports, run `go tool dist list`.
 
-### `os`
+## `os`
 
 Enable GOOS values.
 
@@ -74,7 +99,7 @@ os:
 - "windows"
 ```
 
-### `arch`
+## `arch`
 
 Enable GOARCH values.
 
@@ -98,7 +123,22 @@ arch:
 - "wasm"
 ```
 
-## `excludes`
+# `port_excludes`
+
+Default: (empty)
+
+Skip named Go ports.
+
+Useful for disabling broken or deprecated ports.
+
+Example:
+
+```yaml
+port_excludes:
+- "darwin/amd64"
+```
+
+# `archive_excludes`
 
 Default:
 
@@ -107,7 +147,7 @@ Default:
 - "Thumbs.db" # Explorer
 ```
 
-Skips corresponding file path patterns.
+Skips corresponding file path patterns when archiving binaries.
 
 Syntax: [Glob](https://pkg.go.dev/path/filepath#Match)
 
@@ -118,17 +158,4 @@ excludes:
 - ".DS_Store"  # Finder
 - ".directory" # Dolpin
 - "Thumbs.db"  # Explorer
-```
-
-## `go_args`
-
-Default: (empty)
-
-Supply additional CLI arguments to `go build`... commands.
-
-Example:
-
-```yaml
-go_args:
-- "-v"
 ```

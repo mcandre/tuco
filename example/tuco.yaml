@@ -7,10 +7,6 @@ banner: "hello"
 
 # jobs: 4
 
-# excludes:
-# - ".DS_Store"
-# - "Thumbs.db"
-
 # go_args:
 # - "-v"
 
@@ -52,3 +48,10 @@ arch:
 - "riscv64"
 - "s390x"
 - "wasm"
+
+# port_excludes:
+# - "darwin/amd64"
+
+# archive_excludes:
+# - ".DS_Store"
+# - "Thumbs.db"

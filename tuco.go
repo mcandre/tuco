@@ -32,13 +32,13 @@ const DefaultArtifacts = "bin"
 // DefaultJobs denotes the default number of goroutines.
 const DefaultJobs uint = 4
 
-// DefaultExcludes generates file path patterns to strip from archives.
-func DefaultExcludes() []string {
+// DefaultArchiveExcludes generates file path patterns to strip from binary archives.
+var DefaultArchiveExcludes = sync.OnceValue(func() []string {
 	return []string{
 		".DS_Store",
 		"Thumbs.db",
 	}
-}
+})
 
 // Port models a basic targetable execution configuration.
 type Port struct {
@@ -108,12 +108,6 @@ type Tuco struct {
 	// Jobs limits the number of goroutines (default: `DefaultJobs`).
 	Jobs uint `yaml:"jobs,omitempty"`
 
-	// Excludes skips matching file paths from archival.
-	//
-	// Glob syntax
-	// https://pkg.go.dev/path/filepath#Match
-	Excludes []string `yaml:"excludes,omitempty"`
-
 	// GoArgs collects additional `go build`... CLI flags
 	GoArgs []string `yaml:"go_args,omitempty"`
 
@@ -122,6 +116,15 @@ type Tuco struct {
 
 	// Arch enables matching Go ports by GOARCH.
 	Arch []string `yaml:"arch,omitempty"`
+
+	// PortExcludes skips named Go ports.
+	PortExcludes []string `yaml:"port_excludes,omitempty"`
+
+	// ArchiveExcludes skips matching file paths when archiving binaries.
+	//
+	// Glob syntax
+	// https://pkg.go.dev/path/filepath#Match
+	ArchiveExcludes []string `yaml:"archive_excludes,omitempty"`
 
 	// ports caches target ports.
 	ports []Port `yaml:"-"`
@@ -158,7 +161,7 @@ func NewTuco() Tuco {
 	var tc Tuco
 	tc.Artifacts = DefaultArtifacts
 	tc.Jobs = DefaultJobs
-	tc.Excludes = DefaultExcludes()
+	tc.ArchiveExcludes = DefaultArchiveExcludes()
 	return tc
 }
 
@@ -171,8 +174,10 @@ func Load() (*Tuco, error) {
 	}
 
 	tc := NewTuco()
+	decoder := yaml.NewDecoder(bytes.NewReader(tucoYAMLBytes))
+	decoder.KnownFields(true)
 
-	if err := yaml.Unmarshal(tucoYAMLBytes, &tc); err != nil {
+	if err := decoder.Decode(&tc); err != nil {
 		return nil, err
 	}
 
@@ -261,7 +266,7 @@ func (o Tuco) Archive(port Port) error {
 
 		var isExcluded bool
 
-		for _, exclusion := range o.Excludes {
+		for _, exclusion := range o.ArchiveExcludes {
 			m, err := filepath.Match(exclusion, basename)
 
 			if err != nil {
@@ -411,76 +416,66 @@ func (o *Tuco) UpdatePortCache() error {
 	}
 
 	scanner := bufio.NewScanner(bytes.NewReader(stdout))
-	var availablePorts []Port
+	availableGoosSet := make(map[string]struct{})
+	availableGoarchSet := make(map[string]struct{})
+	availablePortsSet := make(map[Port]struct{})
 
 	for scanner.Scan() {
 		line := scanner.Text()
-		port, err2 := ParsePort(line)
+		portP, err2 := ParsePort(line)
 
 		if err2 != nil {
 			return err2
 		}
 
-		availablePorts = append(availablePorts, *port)
+		port := *portP
+		availableGoosSet[port.Os] = struct{}{}
+		availableGoarchSet[port.Arch] = struct{}{}
+		availablePortsSet[port] = struct{}{}
 	}
 
-	goosList := o.Os
-	goarchList := o.Arch
+	goosSet := make(map[string]struct{})
 
-	for _, goos := range goosList {
-		var foundGoos bool
-
-		for _, port := range availablePorts {
-			if port.Os == goos {
-				foundGoos = true
-				break
-			}
+	for _, goos := range o.Os {
+		if _, ok := availableGoosSet[goos]; !ok {
+			return fmt.Errorf("invalid goos: %s", goos)
 		}
 
-		if !foundGoos {
-			return fmt.Errorf("invalid os: %s", goos)
-		}
+		goosSet[goos] = struct{}{}
 	}
 
-	for _, goarch := range goarchList {
-		var foundGoArch bool
+	goarchSet := make(map[string]struct{})
 
-		for _, port := range availablePorts {
-			if port.Arch == goarch {
-				foundGoArch = true
-				break
-			}
+	for _, goarch := range o.Arch {
+		if _, ok := availableGoarchSet[goarch]; !ok {
+			return fmt.Errorf("invalid goarch: %s", goarch)
 		}
 
-		if !foundGoArch {
-			return fmt.Errorf("invalid arch: %s", goarch)
-		}
+		goarchSet[goarch] = struct{}{}
+	}
+
+	excludeSet := make(map[string]struct{})
+
+	for _, exclusion := range o.PortExcludes {
+		excludeSet[exclusion] = struct{}{}
 	}
 
 	var enabledPorts []Port
 
-	for _, port := range availablePorts {
-		var enabledGoos bool
-
-		for _, goos := range goosList {
-			if port.Os == goos {
-				enabledGoos = true
-				break
-			}
+	for port := range availablePortsSet {
+		if _, ok := goosSet[port.Os]; !ok {
+			continue
 		}
 
-		var enabledGoarch bool
-
-		for _, goarch := range goarchList {
-			if port.Arch == goarch {
-				enabledGoarch = true
-				break
-			}
+		if _, ok := goarchSet[port.Arch]; !ok {
+			continue
 		}
 
-		if enabledGoos && enabledGoarch {
-			enabledPorts = append(enabledPorts, port)
+		if _, ok := excludeSet[port.String()]; ok {
+			continue
 		}
+
+		enabledPorts = append(enabledPorts, port)
 	}
 
 	sort.Slice(enabledPorts, func(i, j int) bool {
@@ -548,10 +543,6 @@ func (o *Tuco) Run() []error {
 	if len(errs) != 0 {
 		return errs
 	}
-
-	// log.Printf("%sarchiving\n", prefix)
-
-	// return o.Archive(port, outputPth)
 
 	log.Printf("binaries archived: %s\n", tarballRoot)
 
