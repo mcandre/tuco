@@ -5,17 +5,28 @@ $ hello
 Hello World!
 ```
 
-# REQUIREMENTS
+# PREREQUISITES
 
-* [Go](https://golang.org/) 1.26.1+
+* [Go](https://golang.org/)
+* [tuco](https://github.com/mcandre/tuco)
 
-# BUILD BINARIES
+## Recommended
+
+* a UNIX-like environment (e.g. [WSL](https://learn.microsoft.com/en-us/windows/wsl/))
+
+## Postinstall
+
+Register output of `go env GOBIN` to `PATH` environment variable.
+
+# TASKS
+
+## Crosscompile Binaries
 
 ```sh
 tuco
 ```
 
-# CLEAN
+## Clean Workspace
 
 ```sh
 rm -rf bin
