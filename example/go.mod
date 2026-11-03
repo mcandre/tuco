@@ -1,3 +1,3 @@
 module github.com/mcandre/tuco/example
 
-go 1.27.0
+go 1.27.3
