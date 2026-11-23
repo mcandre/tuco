@@ -1,6 +1,6 @@
 # tuco: minimalist Go port multiplexer
 
-[![API Docs](https://badgen.net/static/docs/API/007d9c?icon=go)](https://pkg.go.dev/github.com/mcandre/tuco) [![CI/CD](https://badgen.net/github/checks/mcandre/tuco?icon=github)](https://github.com/mcandre/tuco/actions) [![License](https://badgen.net/static/license/BSD/ab2b29?icon=freebsd)](LICENSE.md)
+[![API Docs](https://badgen.net/static/docs/API/007d9c?icon=go)](https://pkg.go.dev/github.com/mcandre/tuco) [![CI/CD](https://badgen.net/github/checks/mcandre/tuco?icon=github)](https://github.com/mcandre/tuco/actions) [![License](https://badgen.net/static/license/BSD/ab2b29?icon=freebsd)](LICENSE.md) [![AI](https://badgen.net/static/人/NO%20AI?color=aa4a44)](AI-DECLARATION.md)
 
 ![la tuza](tuco.png)
 
